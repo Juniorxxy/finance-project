@@ -1,0 +1,17 @@
+{
+  "projectTitle": "Nossa História",
+  "theme": {
+    "primaryColor": "#000000",
+    "secondaryColor": "#ff0000"
+  },
+  "features": {
+    "showLoveMessages": true,
+    "showFirstMeetingLocation": true
+  },
+  "firstMeeting": {
+    "latitude": -23.55052,
+    "longitude": -46.633308,
+    "locationLabel": "Nosso primeiro encontro",
+    "googleMapsUrl": "https://www.google.com/maps?q=-23.55052,-46.633308"
+  }
+}

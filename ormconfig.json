@@ -1,0 +1,19 @@
+{
+    "type": "postgres",
+    "host": "postgresql://postgres:G7p%23v9%40Lr%21xQw2Tz@db.bvxjotqbopfxqlqcopxn.supabase.co:5432/postgres",
+    "port": 5432,
+    "username": "postgres",
+    "password": "G7p#v9@Lr!xQw2Tz",
+    "database": "postgres",
+    "entities": [
+        "src/entity/**/*.ts"
+    ],
+    "migrations": [
+        "src/migrations/**/*.ts"
+    ],
+    "cli": {
+        "migrationsDir": "src/migration"
+    },
+    "synchronize": true,
+    "logging": true
+}

@@ -69,4 +69,26 @@ router.get("/profile", authMiddleware, (req, res) => __awaiter(void 0, void 0, v
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }));
+// Rota PATCH para atualizar parceiro (substitui /couple)
+router.patch("/partner", authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+    }
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        // Busca usuário parceiro pelo email
+        const partnerUser = yield userRepository.findOne({ where: { email } });
+        if (!partnerUser) {
+            return res.status(404).json({ error: "Partner user not found" });
+        }
+        // Atualiza o partnerId do usuário autenticado
+        yield userRepository.update({ id: req.user.id }, { partnerId: partnerUser.id });
+        return res.status(200).json({ message: "Partner added successfully" });
+    }
+    catch (error) {
+        console.error("Update partner error", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+}));
 export default router;

@@ -33,6 +33,6 @@ export class User {
   @DeleteDateColumn()
   deletedAt?: Date;
 
-  @Column()
-  partner?: string;
+  @Column({ nullable: true })
+  partnerId?: number; // ID do usuário parceiro
 }

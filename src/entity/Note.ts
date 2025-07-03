@@ -4,13 +4,12 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
+  JoinColumn,
 } from "typeorm";
 import { User } from "./User.js";
 
 @Entity()
-export class Post {
+export class Note {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -23,21 +22,17 @@ export class Post {
   @Column()
   userId!: number;
 
-  @ManyToOne(() => User, (user: User) => user.id)
-  user!: User;
-
   @Column()
   recipientId!: number;
 
-  @ManyToOne(() => User, (user: User) => user.id)
-  recipient!: User;
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: "userId" })
+  user?: User;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: "recipientId" })
+  recipient?: User;
 
   @CreateDateColumn()
   createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

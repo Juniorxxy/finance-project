@@ -80,7 +80,6 @@ router.get("/", authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, 
         if (posts.length === 0) {
             return res.status(404).json({ error: "No posts found for this user" });
         }
-        // Remove hash_password dos objetos user e recipient
         const safePosts = posts.map((post) => (Object.assign(Object.assign({}, post), { user: post.user
                 ? {
                     id: post.user.id,

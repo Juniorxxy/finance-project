@@ -3,7 +3,7 @@ import { AppDataSource } from "../../database/data-source.js";
 import { User } from "../entity/User.js";
 import { authMiddleware } from "../middleware/auth.js";
 import bcrypt from "bcrypt";
-import { RegisterRequestBody, UpdateCoupleBody } from "../interfaces/userInterfaces.js";
+import { RegisterRequestBody } from "../interfaces/userInterfaces.js";
 
 const router: Router = express.Router();
 
@@ -82,30 +82,41 @@ router.get(
   }
 );
 
+// Rota PATCH para atualizar parceiro (substitui /couple)
 router.patch(
-  "/couple",
+  "/partner",
   authMiddleware,
   async (
-    req: express.Request<{}, {}, UpdateCoupleBody>,
+    req: express.Request<{}, {}, { email: string }>,
     res: express.Response
   ) => {
     const { email } = req.body;
 
     if (!email) {
-      return res
-        .status(400)
-        .json({error: "email is required"});
+      return res.status(400).json({ error: "Email is required" });
     }
 
     try {
       const userRepository = AppDataSource.getRepository(User);
-      const updateCouple = userRepository.update({
-        user
-      })
+
+      // Busca usuário parceiro pelo email
+      const partnerUser = await userRepository.findOne({ where: { email } });
+      if (!partnerUser) {
+        return res.status(404).json({ error: "Partner user not found" });
+      }
+
+      // Atualiza o partnerId do usuário autenticado
+      await userRepository.update(
+        { id: req.user!.id },
+        { partnerId: partnerUser.id }
+      );
+
+      return res.status(200).json({ message: "Partner added successfully" });
+    } catch (error) {
+      console.error("Update partner error", error);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   }
-)
-  
-  
-  
-  export default router;
+);
+
+export default router;

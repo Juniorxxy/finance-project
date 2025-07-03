@@ -7,46 +7,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, } from "typeorm";
-let User = class User {
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn, } from "typeorm";
+import { User } from "./User.js";
+let Note = class Note {
 };
 __decorate([
     PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
+], Note.prototype, "id", void 0);
 __decorate([
     Column(),
     __metadata("design:type", String)
-], User.prototype, "name", void 0);
+], Note.prototype, "title", void 0);
 __decorate([
     Column(),
     __metadata("design:type", String)
-], User.prototype, "email", void 0);
+], Note.prototype, "content", void 0);
 __decorate([
     Column(),
-    __metadata("design:type", String)
-], User.prototype, "cellphone", void 0);
+    __metadata("design:type", Number)
+], Note.prototype, "userId", void 0);
 __decorate([
     Column(),
-    __metadata("design:type", String)
-], User.prototype, "hash_password", void 0);
+    __metadata("design:type", Number)
+], Note.prototype, "recipientId", void 0);
+__decorate([
+    ManyToOne(() => User, (user) => user.id),
+    JoinColumn({ name: "userId" }),
+    __metadata("design:type", User)
+], Note.prototype, "user", void 0);
+__decorate([
+    ManyToOne(() => User, (user) => user.id),
+    JoinColumn({ name: "recipientId" }),
+    __metadata("design:type", User)
+], Note.prototype, "recipient", void 0);
 __decorate([
     CreateDateColumn(),
     __metadata("design:type", Date)
-], User.prototype, "createdAt", void 0);
-__decorate([
-    UpdateDateColumn(),
-    __metadata("design:type", Date)
-], User.prototype, "updatedAt", void 0);
-__decorate([
-    DeleteDateColumn(),
-    __metadata("design:type", Date)
-], User.prototype, "deletedAt", void 0);
-__decorate([
-    Column({ nullable: true }),
-    __metadata("design:type", Number)
-], User.prototype, "partnerId", void 0);
-User = __decorate([
+], Note.prototype, "createdAt", void 0);
+Note = __decorate([
     Entity()
-], User);
-export { User };
+], Note);
+export { Note };

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "../src/entity/User.js";
-import { Post } from "../src/entity/Post.js";
+import { Note } from "../src/entity/Note.js";
 import dotenv from "dotenv";
 dotenv.config();
 export const AppDataSource = new DataSource({
@@ -9,7 +9,10 @@ export const AppDataSource = new DataSource({
     url: process.env.DB_URL,
     synchronize: true,
     logging: ["error"],
-    entities: [User, Post],
+    entities: [User, Note],
     migrations: [],
     subscribers: [],
+    extra: {
+        family: 4,
+    },
 });

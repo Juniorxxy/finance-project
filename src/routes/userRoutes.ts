@@ -2,8 +2,8 @@ import express, { Router } from "express";
 import { AppDataSource } from "../../database/data-source.js";
 import { User } from "../entity/User.js";
 import { authMiddleware } from "../middleware/auth.js";
-import bcrypt from "bcrypt";
 import { RegisterRequestBody } from "../interfaces/userInterfaces.js";
+import { userRegister } from "../service/userService.js";
 
 const router: Router = express.Router();
 
@@ -13,42 +13,22 @@ router.post(
     req: express.Request<{}, {}, RegisterRequestBody>,
     res: express.Response
   ) => {
-    const { name, email, cellphone, password } = req.body;
-
-    if (!name || !email || !cellphone || !password) {
-      return res
-        .status(400)
-        .json({ error: "Name, email, cellphone and password are required" });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
-    }
-
     try {
-      const userRepository = AppDataSource.getRepository(User);
-      const existingUser = await userRepository.findOne({ where: { email } });
-      if (existingUser) {
-        return res.status(409).json({ error: "Email already used" });
-      }
+      const { name, email, cellphone, password } = req.body;
 
-      const hash_password = await bcrypt.hash(password, 10);
+      const result = await userRegister({ name, email, cellphone, password });
 
-      const newUser = userRepository.create({
-        name,
-        email,
-        cellphone,
-        hash_password,
-      });
-
-      await userRepository.save(newUser);
-
-      return res
-        .status(201)
-        .json({ message: "User created successfully", email });
+      return res.status(201).json(result);
     } catch (error) {
       console.error("Register error", error);
+
+      if (error instanceof Error) {
+        if (error.message === "Email already used") {
+          return res.status(409).json({ error: error.message });
+        }
+        return res.status(400).json({ error: error.message });
+      }
+
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

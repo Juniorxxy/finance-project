@@ -8,41 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import express from "express";
-import { AppDataSource } from "../../database/data-source.js";
-import { User } from "../entity/User.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { authenticate } from "../service/authService.js";
 const router = express.Router();
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
-    }
     try {
-        const userRepository = AppDataSource.getRepository(User);
-        const user = yield userRepository.findOne({ where: { email } });
-        if (!user) {
-            return res.status(401).json({ error: "User not found" });
-        }
-        const match = yield bcrypt.compare(password, user.hash_password);
-        if (!match) {
-            return res.status(401).json({ error: "Incorrect password" });
-        }
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
-            throw new Error("JWT_SECRET não está definido no .env");
-        }
-        const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, {
-            expiresIn: "1h",
-        });
-        return res.json({
-            message: "Login Successful",
-            email: user.email,
-            token,
-        });
+        const { email, password } = req.body;
+        const result = yield authenticate({ email, password });
+        return res.json(result);
     }
     catch (error) {
         console.error("Login error", error);
+        if (error instanceof Error) {
+            return res.status(401).json({ error: error.message });
+        }
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }));

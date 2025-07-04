@@ -37,3 +37,22 @@ export async function userRegister(dataUserRegister: RegisterRequestBody) {
     email: newUser.email,
   };
 }
+
+export async function getUserProfile(userId: number) {
+  const userRepository = AppDataSource.getRepository(User);
+  const user = await userRepository.findOne({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return {
+    name: user.name,
+    email: user.email,
+    cellphone: user.cellphone,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+}

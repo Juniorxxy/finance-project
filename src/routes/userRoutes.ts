@@ -3,7 +3,7 @@ import { AppDataSource } from "../../database/data-source.js";
 import { User } from "../entity/User.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { RegisterRequestBody } from "../interfaces/userInterfaces.js";
-import { userRegister } from "../service/userService.js";
+import { getUserProfile, userRegister } from "../service/userService.js";
 
 const router: Router = express.Router();
 
@@ -39,24 +39,13 @@ router.get(
   authMiddleware,
   async (req: express.Request, res: express.Response) => {
     try {
-      const userRepository = AppDataSource.getRepository(User);
-      const user = await userRepository.findOne({
-        where: { id: req.user!.id },
-      });
-
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      return res.json({
-        name: user.name,
-        email: user.email,
-        cellphone: user.cellphone,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      });
-    } catch (error) {
+      const result = await getUserProfile(req.user!.id);
+      return res.status(200).json(result);
+    } catch (error: any) {
       console.error("Profile error", error);
+      if (error.message === "User not found") {
+        return res.status(404).json({ error: error.message });
+      }
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

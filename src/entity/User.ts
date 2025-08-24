@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToMany,
 } from "typeorm";
+import { Project } from "./Project.js";
 
 @Entity()
 export class User {
@@ -35,4 +37,7 @@ export class User {
 
   @Column({ nullable: true })
   partnerId?: number; // ID do usuário parceiro
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects!: Project[];
 }

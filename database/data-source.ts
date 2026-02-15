@@ -16,6 +16,6 @@ export const AppDataSource = new DataSource({
   migrations: [],
   subscribers: [],
   extra: {
-    family: 4,
+    family: 4
   },
 });

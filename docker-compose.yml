@@ -1,0 +1,32 @@
+# docker-compose.yml
+services:
+  postgres:
+    image: postgres:15
+    container_name: finance-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha123
+      POSTGRES_DB: finance
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: finance-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_URL: postgresql://postgres:senha123@postgres:5432/finance
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+    command: npm run dev
+
+volumes:
+  db_data:

@@ -55,3 +55,7 @@ jest-output/
 *.tgz
 *.gz
 *.zip
+
+# Docker
+pgdata/
+postgres_data/

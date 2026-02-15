@@ -1,3 +1,4 @@
+// src/index.ts
 import express, { Express } from "express";
 import dotenv from "dotenv";
 dotenv.config();
@@ -18,13 +19,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/projects", projectRoutes);
 
-AppDataSource.initialize()
-  .then(() => {
+async function startServer() {
+  try {
+    console.log("⏳ Inicializando Data Source...");
+    await AppDataSource.initialize();
     console.log("📦 Data Source has been initialized!");
-    app.listen(3000, () => {
+
+    app.listen(3000, "0.0.0.0", () => {
       console.log("🚀 Server running on http://localhost:3000");
     });
-  })
-  .catch((error) =>
-    console.log("❌ Error during Data Source initialization:", error)
-  );
+  } catch (error) {
+    console.error("❌ Error during Data Source initialization:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
